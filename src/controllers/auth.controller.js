@@ -1,7 +1,9 @@
 require("dotenv").config();
 const { User } = require("../models/user.model");
+const userservice = require("../services/user.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -25,3 +27,17 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Login failed' })
   }
 };
+
+
+exports.register = async (req, res) => {
+  try {
+    const hashedPw = await bcrypt.hash(req.body.password, 10);
+    const data = { ...req.body, password: hashedPw };
+    const nuser = await userservice.register(data);
+    res.status(201).json(nuser);
+  } catch (error) {
+      console.error(error); 
+    res.status(400).json({ error: "Failed to register" });
+  }
+};
+
