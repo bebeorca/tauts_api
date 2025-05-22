@@ -69,3 +69,15 @@ exports.deleteLink = async (req, res) => {
 
   res.status(200).json({ message: 'Link deleted successfully' });
 }
+
+exports.getLink = async (req, res) => {
+  const { id } = req.params
+  const link = await linkservice.getLink(id);
+  if (!link) return res.status(404).json({ message: "Link not found" });
+
+  const { user_id } = link;
+  if (user_id !== req.user.id) {
+    return res.status(403).json({ message: "Forbidden: Access denied" });
+  }
+  res.status(200).json(link)
+}
