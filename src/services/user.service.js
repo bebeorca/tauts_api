@@ -5,6 +5,7 @@ exports.register = async (data) =>{
 } 
 
 exports.getUser = (user_id) => User.findByPk(user_id);
+exports.getUserName = (name) => User.findOne({ where: { name } });
 
 exports.updateUser = async (id, data) => {
     const user = await User.findByPk(id);

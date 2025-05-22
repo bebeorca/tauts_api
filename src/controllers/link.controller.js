@@ -42,7 +42,7 @@ exports.updateLink = async (req, res) => {
   if (user_id !== req.user.id) {
     return res.status(403).json({ message: "Forbidden: Access denied" });
   }
-  
+
   const data = req.body;
 
   try {
@@ -50,8 +50,8 @@ exports.updateLink = async (req, res) => {
 
     res.status(200).json(updatedLink);
   } catch (error) {
-    console.error('Error updating link:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error updating link:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -67,11 +67,11 @@ exports.deleteLink = async (req, res) => {
 
   const deleted = await linkservice.deleteLink(id);
 
-  res.status(200).json({ message: 'Link deleted successfully' });
-}
+  res.status(200).json({ message: "Link deleted successfully" });
+};
 
 exports.getLink = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   const link = await linkservice.getLink(id);
   if (!link) return res.status(404).json({ message: "Link not found" });
 
@@ -79,5 +79,25 @@ exports.getLink = async (req, res) => {
   if (user_id !== req.user.id) {
     return res.status(403).json({ message: "Forbidden: Access denied" });
   }
-  res.status(200).json(link)
-}
+  res.status(200).json(link);
+};
+
+exports.getLinkWithName = async (req, res) => {
+  const { name } = req.params;
+  const user = await userservice.getUserName(name);
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  const { id, profile_image } = user;
+  const links = await linkservice.getLinks(id);
+  if (!links || links.length === 0) {
+    return res.status(200).json({
+      message: "no_links",
+      user: { id, name, profile_image },
+      data: [],
+    });
+  }
+
+  res
+    .status(200)
+    .json({ status: 200, user: { id, name, profile_image }, links: links });
+};
