@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const authRoutes = require("./src/routes/auth.route");
 const linkRoutes = require("./src/routes/link.route");
+const userRoutes = require("./src/routes/user.route");
 const sequelize = require("./src/config/db");
 
 app.use(
@@ -16,9 +17,11 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/link", linkRoutes);
+app.use("/api/users", userRoutes)
 app.get("/api", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
+
 
 sequelize.sync().then(() => {
   console.log("DB connected");
